@@ -50,7 +50,7 @@ app.*.map.json
 android/key.properties
 android/app/google-services.json
 
-iOS
+# iOS
 ios/Runner/GoogleService-Info.plist
 
 # Cloud functions
