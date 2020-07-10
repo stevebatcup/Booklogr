@@ -80,8 +80,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   width: 260.0,
                 ),
               ),
-              SizedBox(
-                height: 15.0,
+              Flexible(
+                child: SizedBox(
+                  height: 15.0,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),

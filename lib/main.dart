@@ -49,7 +49,6 @@ class BookLogr extends StatelessWidget {
 
     var user = Provider.of<FirebaseUser>(context);
     bool loggedIn = user != null;
-    print(loggedIn);
 
     return MultiProvider(
       providers: [
@@ -73,6 +72,7 @@ class BookLogr extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
         ],

@@ -18,6 +18,8 @@ class HaveReadScreen extends StatelessWidget {
     TabService tabService = Provider.of<TabService>(context);
     var user = Provider.of<FirebaseUser>(context);
     bool loggedIn = user != null;
+    BooksCollection<HaveReadBook> collection =
+        BooksCollection<HaveReadBook>(userId: user.uid);
 
     if (loggedIn) {
       return Scaffold(
@@ -52,7 +54,7 @@ class HaveReadScreen extends StatelessWidget {
                 Book book = bookList[index];
                 return BookListItem(
                   book: book,
-                  collection: BooksCollection<HaveReadBook>(),
+                  collection: collection,
                   onPressed: () {
                     Provider.of<BookService>(context, listen: false)
                         .showBook(book: book, context: context);
