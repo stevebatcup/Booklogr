@@ -57,7 +57,7 @@ const TextStyle kLinkTextStyle = TextStyle(
 );
 
 const TextStyle kTextInputStyle = TextStyle(
-  fontSize: 18.0,
+  fontSize: 16.0,
   fontWeight: FontWeight.w500,
   fontFamily: 'SFPro',
   color: kGrey,
@@ -84,6 +84,10 @@ const kSearchTextFieldDecoration = InputDecoration(
     borderSide: BorderSide(color: kGrey, width: 1.0),
   ),
   border: UnderlineInputBorder(),
+  errorBorder: UnderlineInputBorder(
+    // width: 0.0 produces a thin "hairline" border
+    borderSide: BorderSide(color: kPrimaryColour, width: 1.0),
+  ),
 );
 
 const TextStyle kEmptyListTextStyle = TextStyle(
@@ -94,10 +98,9 @@ const TextStyle kEmptyListTextStyle = TextStyle(
 );
 
 const TextStyle kAppBarActionsTextStyle = TextStyle(
-  fontSize: 17.0,
+  fontSize: 18.0,
   fontWeight: FontWeight.w500,
   fontFamily: 'SFPro',
-  color: Colors.white,
 );
 
 const TextStyle kAppBarMenuItemsTextStyle = TextStyle(

@@ -15,16 +15,16 @@ import 'package:booklogr/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class BookDetailScreen extends StatefulWidget {
+class BookDetailScreenMobile extends StatefulWidget {
   final Book book;
 
-  BookDetailScreen(this.book);
+  BookDetailScreenMobile(this.book);
 
   @override
-  _BookDetailScreenState createState() => _BookDetailScreenState();
+  _BookDetailScreenMobileState createState() => _BookDetailScreenMobileState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen>
+class _BookDetailScreenMobileState extends State<BookDetailScreenMobile>
     with TickerProviderStateMixin {
   bool showSpinner = true;
   bool loggedIn;
@@ -125,15 +125,18 @@ class _BookDetailScreenState extends State<BookDetailScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    setupBookAnimations();
     FirebaseUser user = Provider.of<FirebaseUser>(context);
     loggedIn = user != null;
+    setupBookAnimations();
+
     if (loggedIn) {
       bookCollections = <ReadStatus, BooksCollection>{
-        ReadStatus.alreadyRead: BooksCollection<HaveReadBook>(userId: user.uid),
-        ReadStatus.currentlyReading:
-            BooksCollection<ReadingBook>(userId: user.uid),
-        ReadStatus.willRead: BooksCollection<WillReadBook>(userId: user.uid),
+        ReadStatus.alreadyRead: BooksCollection<HaveReadBook>()
+          ..initUserCollection(user),
+        ReadStatus.currentlyReading: BooksCollection<ReadingBook>()
+          ..initUserCollection(user),
+        ReadStatus.willRead: BooksCollection<WillReadBook>()
+          ..initUserCollection(user),
       };
     }
     setInitialReadStatus();
@@ -178,22 +181,22 @@ class _BookDetailScreenState extends State<BookDetailScreen>
     ];
     Text alertContent =
         Text("You must be signed in to add books to your lists.");
-    if (Platform.isIOS) {
-      showCupertinoDialog(
+    if (Platform.isAndroid) {
+      showDialog(
         context: context,
         builder: (_) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
             title: Text(alertTitle),
             actions: alertButtons,
             content: alertContent,
           );
         },
       );
-    } else {
-      showDialog(
+    } else if (Platform.isIOS) {
+      showCupertinoDialog(
         context: context,
         builder: (_) {
-          return AlertDialog(
+          return CupertinoAlertDialog(
             title: Text(alertTitle),
             actions: alertButtons,
             content: alertContent,
@@ -210,6 +213,7 @@ class _BookDetailScreenState extends State<BookDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: kNavBarBackground,
@@ -296,6 +300,8 @@ class _BookDetailScreenState extends State<BookDetailScreen>
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   ReadStatusButton(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3.4,
                                     label: 'I\'ve read this',
                                     currentReadStatus: readStatus,
                                     buttonReadStatus: ReadStatus.alreadyRead,
@@ -312,6 +318,8 @@ class _BookDetailScreenState extends State<BookDetailScreen>
                                     },
                                   ),
                                   ReadStatusButton(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3.4,
                                     label: 'I\'m currently reading this',
                                     currentReadStatus: readStatus,
                                     buttonReadStatus:
@@ -331,6 +339,8 @@ class _BookDetailScreenState extends State<BookDetailScreen>
                                     },
                                   ),
                                   ReadStatusButton(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3.4,
                                     label: 'I want to read this',
                                     currentReadStatus: readStatus,
                                     buttonReadStatus: ReadStatus.willRead,
@@ -355,7 +365,10 @@ class _BookDetailScreenState extends State<BookDetailScreen>
                               child: Center(
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 100.0),
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        kPrimaryColour),
+                                  ),
                                 ),
                               ),
                             ),
@@ -374,16 +387,17 @@ class _BookDetailScreenState extends State<BookDetailScreen>
                             SizedBox(
                               height: 4.0,
                             ),
-                            Html(
-                              data: '${widget.book.description}',
-                              style: {
-                                "p": Style(
-                                  margin: EdgeInsets.only(bottom: 10.0),
-                                  padding: EdgeInsets.zero,
-                                  fontFamily: 'SFPro',
-                                ),
-                              },
-                            ),
+                            if (widget.book.htmlDescription != null)
+                              Html(
+                                data: '${widget.book.htmlDescription}',
+                                style: {
+                                  "p": Style(
+                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    padding: EdgeInsets.zero,
+                                    fontFamily: 'SFPro',
+                                  ),
+                                },
+                              ),
                             SizedBox(height: 15.0),
                             Visibility(
                               visible:

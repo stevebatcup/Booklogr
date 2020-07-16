@@ -16,8 +16,8 @@ class EmptyListAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 370),
         child: GestureDetector(
           onTap: onTap,
           child: Column(

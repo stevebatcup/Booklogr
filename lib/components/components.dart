@@ -6,5 +6,5 @@ export './sign_up_form.dart';
 export './text_title.dart';
 export './third_party_auth_buttons.dart';
 export './read_status_button.dart';
-export './main_app_bar.dart';
+export 'navigation/app_bar_mobile.dart';
 export './book_list_item.dart';

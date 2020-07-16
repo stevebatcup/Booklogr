@@ -7,7 +7,8 @@ class Book {
   String detailLink;
   String publisher;
   String image;
-  String _description;
+  String textDescription;
+  String _htmlDescription;
 
   Book(
       {this.id,
@@ -21,6 +22,7 @@ class Book {
     List<dynamic> authors = data['volumeInfo']['authors'];
     dynamic images = data['volumeInfo']['imageLinks'];
     id = data['etag'];
+    textDescription = data['volumeInfo']['description'];
     title = data['volumeInfo']['title'];
     detailLink = data['selfLink'];
     publisher = data['volumeInfo']['publisher'];
@@ -30,6 +32,7 @@ class Book {
 
   Book.fromFirestoreMap(Map data) {
     id = data['id'];
+    textDescription = data['description'];
     title = data['title'];
     author = data['author'];
     publisher = data['publisher'];
@@ -37,18 +40,19 @@ class Book {
     detailLink = data['detailLink'];
   }
 
-  void setDescription(String description) {
-    _description = description;
+  void setHtmlDescription(String description) {
+    _htmlDescription = description;
   }
 
-  String get description {
-    return _description;
+  String get htmlDescription {
+    return _htmlDescription;
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
+      'description': textDescription,
       'detailLink': detailLink,
       'publisher': publisher,
       'author': author,

@@ -1,3 +1,6 @@
+import 'package:booklogr/components/centred_view.dart';
+import 'package:booklogr/components/navigation/app_bar_desktop_tablet.dart';
+import 'package:booklogr/components/navigation/nav_bar.dart';
 import 'package:booklogr/services/book_service.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +14,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class SearchResultsScreen extends StatefulWidget {
+  static String pageRoute = '/search-results';
   @override
   _SearchResultsScreenState createState() => _SearchResultsScreenState();
 }
@@ -71,48 +76,62 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
     tabService.selectedTabName = "Search results";
 
-    return Scaffold(
-      appBar: MainAppBar(
-        loggedIn: loggedIn,
-        selectedTabName: tabService.selectedTabName,
-      ),
-      body: ModalProgressHUD(
-        color: kPrimaryColour,
-        progressIndicator: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColour),
-        ),
-        inAsyncCall: showSpinner,
-        child: (searchService.bookResults.length == 0) && (showSpinner == false)
-            ? EmptyListAction(
-                label:
-                    "Sorry we can't find any books matching your search term, try again",
-                icon: Icon(
-                  FontAwesomeIcons.sadCry,
-                  size: 35.0,
-                  color: kGrey,
+    return ResponsiveBuilder(
+      builder: (context, sizingInformation) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          appBar: sizingInformation.isMobile
+              ? AppBarMobile(
+                  loggedIn: loggedIn,
+                  selectedTabName: tabService.selectedTabName,
+                )
+              : AppBarDesktopTablet(
+                  activeSection: NavBarSection.search,
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              )
-            : Container(
-                color: Color(0xfff9f9f9),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: searchService.bookResults.length,
-                  itemBuilder: (context, index) {
-                    Book book = searchService.bookResults[index];
-                    return BookListItem(
-                      book: book,
-                      onPressed: () {
-                        Provider.of<BookService>(context, listen: false)
-                            .showBook(book: book, context: context);
-                      },
-                    );
-                  },
-                ),
+          body: CentredView(
+            child: ModalProgressHUD(
+              color: Theme.of(context).colorScheme.background,
+              progressIndicator: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColour),
               ),
-      ),
+              inAsyncCall: showSpinner,
+              child: (searchService.bookResults.length == 0) &&
+                      (showSpinner == false)
+                  ? EmptyListAction(
+                      label:
+                          "Sorry we can't find any books matching your search term, try again",
+                      icon: Icon(
+                        FontAwesomeIcons.sadCry,
+                        size: 35.0,
+                        color: kGrey,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  : Container(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: searchService.bookResults.length,
+                        itemBuilder: (context, index) {
+                          Book book = searchService.bookResults[index];
+                          return BookListItem(
+                            book: book,
+                            onPressed: () {
+                              Provider.of<BookService>(context, listen: false)
+                                  .showBook(
+                                      book: book,
+                                      context: context,
+                                      isMobile: sizingInformation.isMobile);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

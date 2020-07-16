@@ -20,8 +20,8 @@ class AuthFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: 10.0,
-        bottom: 5.0,
+        top: 5.0,
+        bottom: 2.0,
       ),
       child: TextField(
         keyboardType: inputType,

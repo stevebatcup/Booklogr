@@ -34,7 +34,7 @@ class BooksApiService {
     HttpService httpService = HttpService(book.detailLink);
     var result = await httpService.getJsonData();
     if (result['volumeInfo']['description'] != null) {
-      book.setDescription(result['volumeInfo']['description']);
+      book.setHtmlDescription(result['volumeInfo']['description']);
       return book;
     } else {
       return null;

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:booklogr/components/third_party_auth_buttons.dart';
+import 'package:booklogr/utils/web_modal.dart';
 import 'package:flutter/material.dart';
 
 import 'package:booklogr/utils/text_styles.dart';
@@ -11,6 +14,7 @@ import 'package:booklogr/services/auth_service.dart';
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class SignInScreen extends StatefulWidget {
   static const pageRoute = '/sign-in';
@@ -26,18 +30,27 @@ class _SignInScreenState extends State<SignInScreen> {
   String email = '';
   String password = '';
   String errorMsg = '';
+  StreamSubscription<bool> keyboardSub;
 
   @override
   void initState() {
     super.initState();
 
-    KeyboardVisibilityNotification().addNewListener(
-      onChange: (bool visible) {
-        setState(() {
-          keyboardIsOpen = visible;
-        });
+    keyboardSub = KeyboardVisibility.onChange.listen(
+      (bool visible) {
+        if (!showSpinner) {
+          setState(() {
+            keyboardIsOpen = visible;
+          });
+        }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    keyboardSub.cancel();
+    super.dispose();
   }
 
   void onFormError(msg) {
@@ -48,20 +61,23 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void onFormSuccess() {
-    _authService.showWelcomeDialog(
-      context: context,
-      firstWelcome: false,
-    );
-    // Navigator.of(context).pop();
     setState(() {
       showSpinner = false;
+      Navigator.of(context).pop();
+      _authService.showWelcomeDialog(
+        context: context,
+        firstWelcome: false,
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var deviceType = getDeviceType(MediaQuery.of(context).size);
+    bool isMobile = (deviceType == DeviceScreenType.mobile);
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: ModalProgressHUD(
           color: kPrimaryColour,
           progressIndicator: CircularProgressIndicator(
@@ -143,11 +159,11 @@ class _SignInScreenState extends State<SignInScreen> {
                         ActionButton(
                           'Sign in',
                           colour: kPrimaryColour,
-                          action: () {
+                          action: () async {
                             setState(() {
                               showSpinner = true;
                             });
-                            _authService.emailSignIn(
+                            await _authService.emailSignIn(
                               email: email,
                               password: password,
                               successCallback: onFormSuccess,
@@ -160,29 +176,43 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 10.0),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushReplacementNamed(SignUpScreen.pageRoute);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Not yet registered? ',
-                        style: kParaTextStyle,
+              Visibility(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10.0),
+                    GestureDetector(
+                      onTap: () {
+                        isMobile
+                            ? Navigator.of(context, rootNavigator: true)
+                                .pushReplacementNamed(SignUpScreen.pageRoute)
+                            : Navigator.of(context).pushReplacement(
+                                WebModal(
+                                  opaque: false,
+                                  page: SignUpScreen(),
+                                ),
+                              );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Not yet registered? ',
+                              style: kParaTextStyle,
+                            ),
+                            Text(
+                              'Sign Up',
+                              style: kLinkTextStyle,
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        'Sign Up',
-                        style: kLinkTextStyle,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 15.0),
+                  ],
                 ),
+                visible: !keyboardIsOpen,
               ),
-              SizedBox(height: 15.0),
             ],
           ),
         ),

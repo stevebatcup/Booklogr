@@ -1,18 +1,15 @@
 import 'package:booklogr/services/tab_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:booklogr/utils/colours.dart';
-
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class TabLayout extends StatefulWidget {
-  static final String pageRoute = "/search";
-
+class HomeScreenMobile extends StatefulWidget {
   @override
-  _TabLayoutState createState() => _TabLayoutState();
+  _HomeScreenMobileState createState() => _HomeScreenMobileState();
 }
 
-class _TabLayoutState extends State<TabLayout> {
+class _HomeScreenMobileState extends State<HomeScreenMobile> {
   final List<GlobalKey<NavigatorState>> tabKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),

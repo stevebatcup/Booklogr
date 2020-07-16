@@ -1,6 +1,8 @@
+import 'package:booklogr/screens/book_detail_screen_desktop_tablet.dart';
+import 'package:booklogr/utils/web_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:booklogr/models/book.dart';
-import 'package:booklogr/screens/book_detail_screen.dart';
+import 'package:booklogr/screens/book_detail_screen_mobile.dart';
 
 class BookService extends ChangeNotifier {
   String _query = '';
@@ -26,11 +28,18 @@ class BookService extends ChangeNotifier {
     return bookResults.isNotEmpty;
   }
 
-  void showBook({BuildContext context, Book book}) {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (BuildContext context) {
-        return BookDetailScreen(book);
-      },
-    ));
+  void showBook({BuildContext context, Book book, bool isMobile}) {
+    isMobile
+        ? Navigator.push(context, MaterialPageRoute(
+            builder: (BuildContext context) {
+              return BookDetailScreenMobile(book);
+            },
+          ))
+        : Navigator.of(context).push(
+            WebModal(
+              opaque: false,
+              page: BookDetailScreenDesktopTablet(book),
+            ),
+          );
   }
 }

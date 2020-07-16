@@ -9,12 +9,14 @@ class ReadStatusButton extends StatelessWidget {
     @required this.currentReadStatus,
     @required this.buttonReadStatus,
     @required this.onTap,
+    @required this.width,
   }) : super(key: key);
 
   final String label;
   final ReadStatus currentReadStatus;
   final ReadStatus buttonReadStatus;
   final Function onTap;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class ReadStatusButton extends StatelessWidget {
               : Color(0XFFFFF4E7),
         ),
         height: 80.0,
-        width: MediaQuery.of(context).size.width / 3.4,
+        width: width,
         child: Center(
           child: Text(
             label,

@@ -1,12 +1,8 @@
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:booklogr/screens/tab_layout.dart';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   String errorMsg;
@@ -26,7 +22,6 @@ class AuthService {
       Function successCallback,
       Function errorCallback}) async {
     if (email.length == 0 || password.length == 0) {
-      print(blankErrorMsg);
       errorCallback(blankErrorMsg);
     } else if (password != confirmPassword) {
       errorCallback('Make sure your password and confirmation match');
@@ -65,7 +60,6 @@ class AuthService {
         }
 
         FirebaseUser user = result.user;
-        updateUserData(user);
         return user;
       } catch (e) {
         _getFirebaseValidationError(e);
@@ -75,20 +69,12 @@ class AuthService {
     }
   }
 
-  Future<void> updateUserData(FirebaseUser user) {
-    // DocumentReference reportRef = _db.collection('reports').document(user.uid);
-
-    // return reportRef.setData({'uid': user.uid, 'lastActivity': DateTime.now()},
-    //     merge: true);
-    return null;
-  }
-
   Future<void> signOut() async {
     final FirebaseUser user = await getUser;
     if (user.providerData[0].providerId == 'google.com') {
       await _googleSignIn.signOut();
     }
-    await FirebaseAuth.instance.signOut();
+    FirebaseAuth.instance.signOut();
   }
 
   Future<FirebaseUser> googleSignIn() async {
@@ -103,9 +89,6 @@ class AuthService {
 
       AuthResult result = await _auth.signInWithCredential(credential);
       FirebaseUser user = result.user;
-
-      updateUserData(user);
-
       return user;
     } catch (e) {
       return null;
@@ -113,7 +96,7 @@ class AuthService {
   }
 
   void _getFirebaseValidationError(e) {
-    print(e.message);
+    // print(e.toString());
     if (e.code == 'ERROR_WRONG_PASSWORD') {
       errorMsg = 'You entered the wrong password';
     } else if (e.code == 'ERROR_INVALID_EMAIL') {
@@ -150,9 +133,6 @@ class AuthService {
       AuthResult firebaseResult = await _auth.signInWithCredential(credential);
       FirebaseUser user = firebaseResult.user;
 
-      // Optional, Update user data in Firestore
-      updateUserData(user);
-
       return user;
     } catch (error) {
       print(error);
@@ -160,54 +140,27 @@ class AuthService {
     }
   }
 
-  void closeWelcomeDialog(context) {
-    Navigator.of(context, rootNavigator: true).pop('dialog');
-  }
+  void closeWelcomeDialog(context) {}
 
   void showWelcomeDialog({BuildContext context, bool firstWelcome}) {
-    String alertTitle = 'Welcome';
-    List<Widget> alertButtons = <Widget>[
-      FlatButton(
-        child: Text('Search for books'),
-        onPressed: () {
-          closeWelcomeDialog(context);
-          Navigator.of(context, rootNavigator: true)
-              .pushNamed(TabLayout.pageRoute);
-        },
-      ),
-      FlatButton(
-        child: Text('Cancel'),
-        onPressed: () {
-          closeWelcomeDialog(context);
-        },
-      ),
-    ];
-    Text alertContent = firstWelcome
-        ? Text(
-            "Welcome to Booklogr, why not start by searching for books you've already read?")
-        : Text("Welcome back. Would you like to run a search?");
-    if (Platform.isIOS) {
-      showCupertinoDialog(
-        context: context,
-        builder: (_) {
-          return CupertinoAlertDialog(
-            title: Text(alertTitle),
-            actions: alertButtons,
-            content: alertContent,
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            title: Text(alertTitle),
-            actions: alertButtons,
-            content: alertContent,
-          );
-        },
-      );
-    }
+    String alertTitle = 'Success';
+    Text alertContent = Text("Thanks for signing in.");
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text(alertTitle),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(_).pop('dialog');
+              },
+            ),
+          ],
+          content: alertContent,
+        );
+      },
+    );
   }
 }
