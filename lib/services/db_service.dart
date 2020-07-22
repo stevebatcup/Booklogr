@@ -60,7 +60,6 @@ class BooksCollection<T> {
     return _auth.onAuthStateChanged.switchMap(
       (user) {
         if (user != null) {
-          print("stream activated 😀");
           initUserCollection(user);
           return ref.snapshots().map((snap) {
             List<T> bookList = [];
@@ -73,7 +72,6 @@ class BooksCollection<T> {
             return bookList;
           });
         } else {
-          print("null stream 😔");
           return Stream<List<T>>.value(null);
         }
       },

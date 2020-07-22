@@ -9,6 +9,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class ThirdPartyAuthButtons extends StatelessWidget {
   final AuthService _authService = AuthService();
+  final GlobalKey scaffoldKey;
+
+  ThirdPartyAuthButtons({this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +39,14 @@ class ThirdPartyAuthButtons extends StatelessWidget {
             ),
             color: Colors.white,
             onPressed: () async {
-              await _authService.googleSignIn();
-              Navigator.of(context).pop();
-              _authService.showWelcomeDialog(
-                context: context,
-                firstWelcome: true,
-              );
+              FirebaseUser user = await _authService.googleSignIn();
+              if (user != null) {
+                Navigator.of(scaffoldKey.currentContext).pop();
+                _authService.showWelcomeDialog(
+                  scaffoldKey: scaffoldKey,
+                  firstWelcome: true,
+                );
+              }
             },
             elevation: 0.8,
             shape: RoundedRectangleBorder(
@@ -64,7 +69,7 @@ class ThirdPartyAuthButtons extends StatelessWidget {
                   if (user != null) {
                     Navigator.of(context).pop();
                     _authService.showWelcomeDialog(
-                      context: context,
+                      scaffoldKey: scaffoldKey,
                       firstWelcome: true,
                     );
                   }

@@ -28,6 +28,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final AuthService _authService = AuthService();
+  final GlobalKey scaffoldKey = GlobalKey();
   bool keyboardIsOpen = false;
   bool showForm = false;
   bool showSpinner = false;
@@ -64,6 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     bool isMobile = (deviceType == DeviceScreenType.mobile);
     return SafeArea(
       child: Scaffold(
+        key: scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.background,
         body: ModalProgressHUD(
           color: kPrimaryColour,
@@ -122,7 +124,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            child: ThirdPartyAuthButtons(),
+                            child:
+                                ThirdPartyAuthButtons(scaffoldKey: scaffoldKey),
                           ),
                         ],
                       ),
@@ -192,10 +195,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             password: password,
                             confirmPassword: confirmPassword,
                             successCallback: () {
-                              print("foo");
                               Navigator.of(context).pop();
                               _authService.showWelcomeDialog(
-                                context: context,
+                                scaffoldKey: scaffoldKey,
                                 firstWelcome: true,
                               );
                             },

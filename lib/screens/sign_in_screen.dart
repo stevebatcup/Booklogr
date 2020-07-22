@@ -25,6 +25,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final AuthService _authService = AuthService();
+  final GlobalKey scaffoldKey = GlobalKey();
   bool keyboardIsOpen = false;
   bool showSpinner = false;
   String email = '';
@@ -63,9 +64,9 @@ class _SignInScreenState extends State<SignInScreen> {
   void onFormSuccess() {
     setState(() {
       showSpinner = false;
-      Navigator.of(context).pop();
+      Navigator.of(scaffoldKey.currentContext).pop();
       _authService.showWelcomeDialog(
-        context: context,
+        scaffoldKey: scaffoldKey,
         firstWelcome: false,
       );
     });
@@ -77,6 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
     bool isMobile = (deviceType == DeviceScreenType.mobile);
     return SafeArea(
       child: Scaffold(
+        key: scaffoldKey,
         backgroundColor: Theme.of(context).colorScheme.background,
         body: ModalProgressHUD(
           color: kPrimaryColour,
@@ -113,7 +115,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12.0),
-                            child: ThirdPartyAuthButtons(),
+                            child:
+                                ThirdPartyAuthButtons(scaffoldKey: scaffoldKey),
                           ),
                           Text(
                             'OR',

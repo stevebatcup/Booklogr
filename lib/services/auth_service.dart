@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class AuthService {
   String errorMsg;
@@ -86,7 +87,6 @@ class AuthService {
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
       );
-
       AuthResult result = await _auth.signInWithCredential(credential);
       FirebaseUser user = result.user;
       return user;
@@ -142,11 +142,11 @@ class AuthService {
 
   void closeWelcomeDialog(context) {}
 
-  void showWelcomeDialog({BuildContext context, bool firstWelcome}) {
+  void showWelcomeDialog({GlobalKey scaffoldKey, bool firstWelcome}) {
     String alertTitle = 'Success';
     Text alertContent = Text("Thanks for signing in.");
     showDialog(
-      context: context,
+      context: scaffoldKey.currentContext,
       builder: (_) {
         return AlertDialog(
           title: Text(alertTitle),
