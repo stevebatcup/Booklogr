@@ -1,5 +1,5 @@
 version: "Apple Swift version 5.2.4 (swiftlang-1103.0.32.9 clang-1103.0.32.53)"
 options: "1bdc0d4f0a0ced7bca421717aaa617e3"
-build_time: [1595410183, 55162000]
+build_time: [1595410553, 789516000]
 inputs:
   "/Users/steve/Code/Portfolio 2020/booklogr/ios/Runner/AppDelegate.swift": [1585778615, 0]
